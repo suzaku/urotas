@@ -12,7 +12,7 @@
 <ul class="messages">
 {% for note in notes %}
     <li class="note" id="{{ note.id }}">
-        <p class="content">{{ note.content }}</p>
+        <blockquote class="content">{{ note.content }}</blockquote>
         <span class="time">{{ note.modified|date:"n月j日 G:s" }}</span>
         <a class="action" href="/note/remove">删除</a>
     </li>
