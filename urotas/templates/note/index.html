@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ block.super }} | Note{% endblock %}
+
+{% block content %}
+<form action="/note/create" method="POST">
+	<textarea id="content_area" name="content" rows="10" cols="30" class="auto-focus"></textarea>
+	<input type="submit" value="记上一笔" />
+</form>
+
+<h2>My Note Nodes</h2>
+<ul class="messages">
+{% for note in notes %}
+    <li class="note" id="{{ note.id }}">
+        <p class="content">{{ note.content }}</p>
+        <span class="time">{{ note.modified|date:"n月j日 G:s" }}</span>
+        <a class="action" href="/note/remove">删除</a>
+    </li>
+{% endfor %}
+    <li class="note" id="note_template" style="display:none">
+        <p class="content"></p>
+        <span class="time"></span>
+        <a class="action" href="/note/remove">删除</a>
+    </li>
+</ul>
+{% endblock %}
+
+{% block script_block %}
+{{ block.super }}
+<script src="/static/scripts/jquery.hotkeys-0.7.9.min.js"
+        type="text/javascript"></script>
+<script type="text/javascript">
+function updateNoteItem(elm, note) {
+    elm.attr('id', note.id);
+    elm.find('.content').text(note.content);
+    elm.find('.time').text(note.modified);
+}
+
+$(document).ready(function(){
+    $(window).scroll(function(){
+        var lowestTop = $(document).height() - $(window).height();
+        if ($(window).scrollTop() == lowestTop) {
+            $.post('/note/list', {page_idx: 0}, function(notes){
+                if (notes) {
+                    var note_template = $("#note_template");
+                    $.each(notes, function(i){
+                        var note = this;
+                        var note_elm = note_template.clone();
+                        updateNoteItem(note_elm, note);
+                        $('.note:last').before(note_elm);
+                        note_elm.fadeIn("slow");
+                    });
+                }
+            });
+        }
+    });
+
+    $('form').bind('keydown', 'ctrl+return', function(){
+        var data = $(this).serialize();
+        var textarea = $(this).find('textarea');
+        $.post($(this).attr('action'), data, function(notes){
+            if (notes) {
+                var note_template = $("#note_template");
+                var msg_ul = $(".messages");
+                $.each(notes, function(i){
+                    var note = this;
+                    var note_elm = note_template.clone();
+                    updateNoteItem(note_elm, note);
+                    msg_ul.prepend(note_elm);
+                    note_elm.fadeIn("slow");
+                });
+                textarea.val('');
+            }
+        }, 'json');
+    }).find('input:submit').remove();
+
+    $(".note a.action").live('click', function(){
+        var rm_url = $(this).attr('href');
+        if (rm_url) {
+            var note_wrapper = $(this).closest('.note');
+            var note_id = note_wrapper.attr('id');
+            $.post(
+                rm_url,
+                {note_id: note_id},
+                function(success){
+                    if (success) {
+                        note_wrapper.remove();
+                    }
+                },
+                'json'
+            );
+        }
+        return false;
+    });
+});
+</script>
+{% endblock %}
