@@ -9,7 +9,7 @@ from django.shortcuts import (render_to_response, get_list_or_404,
                               get_object_or_404)
 
 from models import Note, Tag
-from forms import NoteForm, QueryNotesByTimeForm
+from forms import NoteForm, QueryNotesByTimeForm, SearchNoteForm
 
 @login_required
 def index(request):
@@ -48,10 +48,24 @@ def list(request):
     if form.is_valid():
         since = form.cleaned_data['timestamp']
         delta = form.cleaned_data['delta']
-        notes = request.user.notes.filter(modified__lt=since).all()[:delta]
+        notes = request.user.notes.filter(
+                            modified__lt=since).all()[:delta]
         notes = [note.get_serializable() for note in notes]
         return HttpResponse(simplejson.dumps(notes),
                             mimetype='application/json')
+    else:
+        # TODO 处理出现异常参数的情况
+        return HttpResponse('false',
+                            mimetype='application/json')
+
+@login_required
+def search(request):
+    form = SearchNoteForm(request.GET)
+    if form.is_valid():
+        tag_name = form.cleaned_data['tag']
+        notes = request.user.notes.filter(
+                        tags__content=tag_name).all()[:17]
+        return render_to_response('note/search.html', {'notes':notes})
     else:
         # TODO 处理出现异常参数的情况
         return HttpResponse('false',

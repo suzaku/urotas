@@ -4,10 +4,13 @@
 {% block title %}{{ block.super }} | Note{% endblock %}
 
 {% block content %}
+
+{% block form %}
 <form action="/note/create" method="POST">
 	<textarea id="content_area" name="content" rows="10" cols="30" class="auto-focus"></textarea>
 	<input type="submit" value="记上一笔" />
 </form>
+{% endblock %}
 
 <h2>My Note Nodes</h2>
 <ul class="messages">
