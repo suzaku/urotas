@@ -34,7 +34,8 @@ class Note(models.Model):
         return {
                 'id': self.id,
                 'content': self.content,
-                'modified': modified_f.value_to_string(self)
+                'modified': modified_f.value_to_string(self),
+                'timestamp': self.modified.strftime('%Y-%m-%d %H:%M:%S.%f'),
                 }
 
     @staticmethod
