@@ -4,6 +4,7 @@ from django.db import models, IntegrityError
 from django.contrib.auth.models import User
 
 from urotas.local.models.fields import FormatDateTimeField
+from utils import tag_linkify
 
 class Tag(models.Model):
     content = models.CharField(max_length=32, unique=True)
@@ -33,13 +34,14 @@ class Note(models.Model):
         modified_f = self._meta.get_field_by_name('modified')[0]
         return {
                 'id': self.id,
-                'content': self.content,
+                'content': tag_linkify(self.content),
                 'modified': modified_f.value_to_string(self),
                 'timestamp': self.modified.strftime('%Y-%m-%d %H:%M:%S.%f'),
                 }
 
     @staticmethod
     def parse_for_tags(instance, **kwargs):
+        # TODO 将不再包含的标签去掉, 增加新的标签
         tag_tokens = instance.content.split('#')
         if len(tag_tokens) >= 3:
             for token in tag_tokens[1:-1:2]:

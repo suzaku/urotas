@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load note_utils %}
 
 {% block title %}{{ block.super }} | Note{% endblock %}
 
@@ -11,18 +12,18 @@
 <h2>My Note Nodes</h2>
 <ul class="messages">
 {% for note in notes %}
-    <li class="note" id="{{ note.id }}">
-        <blockquote class="content">{{ note.content }}</blockquote>
+    <li class="note" id="{{ note.id }}" timestamp="{{ note.modified }}">
+        <blockquote class="content">{{ note.content|tag_linkify }}</blockquote>
         <span class="time">{{ note.modified|date:"n月j日 G:s" }}</span>
         <a class="action" href="/note/remove">删除</a>
     </li>
 {% endfor %}
-    <li class="note" id="note_template" style="display:none">
-        <p class="content"></p>
-        <span class="time"></span>
-        <a class="action" href="/note/remove">删除</a>
-    </li>
 </ul>
+<li class="note hidden" id="note_template">
+    <p class="content"></p>
+    <span class="time"></span>
+    <a class="action" href="/note/remove">删除</a>
+</li>
 {% endblock %}
 
 {% block script_block %}
@@ -32,27 +33,33 @@
 <script type="text/javascript">
 function updateNoteItem(elm, note) {
     elm.attr('id', note.id);
-    elm.find('.content').text(note.content);
+    elm.find('.content').html(note.content);
     elm.find('.time').text(note.modified);
+    if (note.timestamp) {
+        elm.attr('timestamp', note.timestamp);    
+    }
 }
 
 $(document).ready(function(){
     $(window).scroll(function(){
         var lowestTop = $(document).height() - $(window).height();
         if ($(window).scrollTop() == lowestTop) {
-            $.post('/note/list', {page_idx: 0}, function(notes){
+            var last_node = $('.messages .note:last');
+            var timestamp = last_node.attr('timestamp');
+            $.getJSON('/note/list', {timestamp: timestamp}, function(notes){
                 if (notes) {
                     var note_template = $("#note_template");
                     $.each(notes, function(i){
                         var note = this;
                         var note_elm = note_template.clone();
                         updateNoteItem(note_elm, note);
-                        $('.note:last').before(note_elm);
+                        last_node.after(note_elm);
+                        last_node = note_elm;
                         note_elm.fadeIn("slow");
-                    });
-                }
-            });
-        }
+                    }); //each
+                } //if
+            }); //post
+        } //if
     });
 
     $('form').bind('keydown', 'ctrl+return', function(){
