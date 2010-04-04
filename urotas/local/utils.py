@@ -9,7 +9,7 @@ from django.utils.html import escape
 import re
 TAG_PATTERN = re.compile(r'#[^#]+#')
 
-def tag_linkify(content):
+def linkify(content):
     untagged_tokens = TAG_PATTERN.split(content)
     tagged_tokens = TAG_PATTERN.findall(content)
     if tagged_tokens:

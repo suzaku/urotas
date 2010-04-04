@@ -1,6 +1,10 @@
+#-*-coding=utf-8-*-
 from django.utils import datetime_safe
+from django.utils.safestring import mark_safe
 from django.utils.dateformat import format
 from django.db import models
+
+from ..utils import linkify
 
 class FormatDateTimeField(models.DateTimeField):
     """A datetime field that support a `format` parameter.
@@ -23,3 +27,18 @@ class FormatDateTimeField(models.DateTimeField):
             d = datetime_safe.new_datetime(val)
             data = format(d, self.format)
         return data
+
+class NoteContentField(models.CharField):
+    """笔记内容
+    自动将内容中的标签记号封装成对应的查询链接.
+    """
+
+    # For detail: http://docs.djangoproject.com/en/dev/howto/custom-model-fields/#the-subfieldbase-metaclass
+    __metaclass__ = models.SubfieldBase
+
+    def to_python(self, value):
+        self._raw_value = super(NoteContentField, self).to_python(value)
+        return mark_safe(linkify(self._raw_value))
+
+    def get_db_prep_value(self, value):
+        return self._raw_value

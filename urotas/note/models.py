@@ -3,8 +3,8 @@
 from django.db import models, IntegrityError
 from django.contrib.auth.models import User
 
-from urotas.local.models.fields import FormatDateTimeField
-from utils import tag_linkify
+from urotas.local.models.fields import (FormatDateTimeField,
+                                        NoteContentField,)
 
 class Tag(models.Model):
     content = models.CharField(max_length=32, unique=True)
@@ -16,7 +16,7 @@ class Tag(models.Model):
 
 class Note(models.Model):
     author = models.ForeignKey(User, related_name='notes')
-    content = models.CharField(max_length=256)
+    content = NoteContentField(max_length=256)
     created = FormatDateTimeField(format="n月j日 G:s",
                                   auto_now_add=True)
     modified = FormatDateTimeField(format="n月j日 G:s",
@@ -34,7 +34,7 @@ class Note(models.Model):
         modified_f = self._meta.get_field_by_name('modified')[0]
         return {
                 'id': self.id,
-                'content': tag_linkify(self.content),
+                'content': self.content,
                 'modified': modified_f.value_to_string(self),
                 'timestamp': self.modified.strftime('%Y-%m-%d %H:%M:%S.%f'),
                 }
