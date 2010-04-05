@@ -5,26 +5,38 @@
 {% block content %}
 
 {% block form %}
-<form action="/note/create" method="POST">
-	<textarea id="content_area" name="content" rows="10" cols="30" class="auto-focus"></textarea>
+<form class="note_form" action="/note/create" method="POST">
+	<textarea id="content_area" name="content" class="auto-focus"></textarea>
 	<input type="submit" value="记上一笔" />
 </form>
 {% endblock %}
 
-<h2>My Note Nodes</h2>
-<ul class="messages">
-{% for note in notes %}
-    <li class="note" id="{{ note.id }}" timestamp="{{ note.modified }}">
-        <blockquote class="content">{{ note.content }}</blockquote>
-        <span class="time">{{ note.modified|date:"n月j日 G:s" }}</span>
-        <a class="action" href="/note/remove">删除</a>
-    </li>
-{% endfor %}
-</ul>
+<div class="note_column">
+    <h2>我的MicroNote</h2>
+    <ul class="messages">
+    {% for note in notes %}
+        <li class="note" id="{{ note.id }}" timestamp="{{ note.modified }}">
+            <blockquote class="content">{{ note.content }}</blockquote>
+            <div class="extra_info">
+                <span class="time">{{ note.modified|date:"n月j日 G:s" }}</span>
+                <div class="action">
+                    <a class="edit" href="/note/modify">修改</a>
+                    <a class="del" href="/note/remove">删除</a>
+                </div>
+            </div>
+        </li>
+    {% endfor %}
+    </ul>
+</div>
 <li class="note hidden" id="note_template">
     <p class="content"></p>
-    <span class="time"></span>
-    <a class="action" href="/note/remove">删除</a>
+    <div class="extra_info">
+        <span class="time"></span>
+        <div class="action">
+            <a class="edit" href="/note/modify">修改</a>
+            <a class="del" href="/note/remove">删除</a>
+        </div>
+    </div>
 </li>
 {% endblock %}
 
@@ -83,7 +95,7 @@ $(document).ready(function(){
         }, 'json');
     }).find('input:submit').remove();
 
-    $(".note a.action").live('click', function(){
+    $(".action a.del").live('click', function(){
         var rm_url = $(this).attr('href');
         if (rm_url) {
             var note_wrapper = $(this).closest('.note');

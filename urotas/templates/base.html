@@ -6,12 +6,52 @@
     {% block style_block %}
     <link rel="stylesheet" type="text/css" href="/static/styles/reset-fonts-grids.css">
     <style type="text/css">
-    html {
-        background-color: black;    
-        color: gray;
+    body {
+        font-size: 0.8em;
+        background: url('/static/images/urotas_bg.png') repeat-x;
+        color: #000;
     }
-    .messages .note .content{
-        color: #0F0;
+    h1 {
+        font-size: 2.5em; 
+    }
+    h2 {
+        font-size: 1.5em; 
+        float: left;
+    }
+    .note_column {
+        width: 50%;
+        margin: 0 auto;
+    }
+    .messages {
+        clear: both;
+        width: 50em; 
+        margin: 0 auto;
+    }
+    .note_form textarea {
+        margin: 1em auto;
+        font-size: 120%;
+        height: 8em;
+        width: 30em; 
+    }
+    .note {
+        margin: 1em;
+    }
+    .content{
+        line-height: 1.5em;
+        text-align: justify;
+        font-size: 1.2em;
+
+        margin: 0 auto;
+        width: 25em;
+    }
+    .extra_info {
+        float: right;
+    }
+    .action {
+        display: inline;
+    }
+    .action a {
+        text-decoration: none;
     }
     .hidden {
         display: none;
