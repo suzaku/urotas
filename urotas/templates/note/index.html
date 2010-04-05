@@ -12,12 +12,11 @@
 {% endblock %}
 
 <div class="note_column">
-    <h2>我的MicroNote</h2>
     <ul class="messages">
     {% for note in notes %}
         <li class="note" id="{{ note.id }}" timestamp="{{ note.modified }}">
             <blockquote class="content">{{ note.content }}</blockquote>
-            <div class="extra_info">
+            <div class="extra_info hidden">
                 <span class="time">{{ note.modified|date:"n月j日 G:s" }}</span>
                 <div class="action">
                     <a class="edit" href="/note/modify">修改</a>
@@ -113,6 +112,15 @@ $(document).ready(function(){
         }
         return false;
     });
+
+    $(".note").hover(
+        function() {
+            $(this).find('.extra_info').show();    
+        }, 
+        function() {
+            $(this).find('.extra_info').hide();
+        } 
+    );
 });
 </script>
 {% endblock %}
