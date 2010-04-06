@@ -8,6 +8,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),
+    (r'^accounts/logout/$', 'django.contrib.auth.views.logout'),
     (r'^note/', include('urotas.note.urls')),
 
     (r'^static/(?P<path>.*)$', 'django.views.static.serve',

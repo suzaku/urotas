@@ -14,7 +14,9 @@ from forms import NoteForm, QueryNotesByTimeForm, SearchNoteForm
 @login_required
 def index(request):
     notes = request.user.notes.all()[:17]
-    return render_to_response('note/index.html', {'notes':notes})
+    return render_to_response('note/index.html',
+                              {'notes':notes},
+                              context_instance=RequestContext(request))
 
 @login_required
 def create(request):

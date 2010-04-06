@@ -60,6 +60,12 @@
 <body>
     {% block header %}
     <h1>Urotas</h1>
+
+    {% if user.is_authenticated %}
+    <p class="greeting">你好, {{ user.username }}</p>
+    <a href="/accounts/logout">退出</a>
+    {% endif %}
+
     {% endblock %}
 
     {% block content %}
