@@ -15,6 +15,47 @@
     h1 {
         font-size: 2.5em; 
     }
+    #user_prompt {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    div#navbar {
+        height: 30px;
+        width: 100%;
+        border-top: solid #000 1px;
+        border-bottom: solid #000 1px;
+        background-color: #369;
+    }
+    div#navbar ul {
+        margin: 0;
+        padding: 0;
+        font-size: small;
+        color: #FFF;
+        line-height: 30px;
+        white-space: nowrap;
+    }
+    div#navbar li {
+        list-style-type: none;
+        display: inline;
+    }
+    div#navbar li a {
+        text-decoration: none;
+        padding: 7px 10px;
+        color: #FFF;
+    }
+    div#navbar li a:link {
+        color: #FFF;
+    }
+    div#navbar li a:visited {
+        color: #CCC;
+    }
+    div#navbar li a:hover {
+        font-weight: bold;
+        color: #FFF;
+        background-color: #36F;
+    }
+
     .note_column {
         width: 50%;
         margin: 0 auto;
@@ -60,13 +101,25 @@
 </head>
 <body>
     {% block header %}
-    <h1>Urotas</h1>
+    <div id="header">
+        <h1>Urotas</h1>
 
-    {% if user.is_authenticated %}
-    <p class="greeting">你好, {{ user.username }}</p>
-    <a href="/accounts/logout">退出</a>
-    {% endif %}
+        <div id="navbar">
+            <ul>
+                <li><a href="/note">我要微记</a></li>
+                <li><a href="/people/page/satoru">个人页面</a></li>
+                <li><a href="/note/garden">微记花园</a></li>
+                <li><a href="/people/profile">我的设置</a></li>
+            </ul>
+        </div>
 
+        {% if user.is_authenticated %}
+        <div id="user_prompt">
+            <p class="greeting">你好, {{ user.username }}</p>
+            <a href="/accounts/logout">退出</a>
+        </div>
+        {% endif %}
+    </div>
     {% endblock %}
 
     {% block content %}
