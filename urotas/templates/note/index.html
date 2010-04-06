@@ -29,7 +29,7 @@
 </div>
 <li class="note hidden" id="note_template">
     <p class="content"></p>
-    <div class="extra_info">
+    <div class="extra_info hidden">
         <span class="time"></span>
         <div class="action">
             <a class="edit" href="/note/modify">修改</a>
@@ -113,13 +113,15 @@ $(document).ready(function(){
         return false;
     });
 
-    $(".note").hover(
-        function() {
-            $(this).find('.extra_info').show();    
-        }, 
-        function() {
-            $(this).find('.extra_info').hide();
-        } 
+    $(".note").live('mouseover mouseout',
+        function(event) {
+            if (event.type == 'mouseover') {
+                $(this).find('.extra_info').show();    
+            }
+            else {
+                $(this).find('.extra_info').hide();
+            }
+        }
     );
 });
 </script>
