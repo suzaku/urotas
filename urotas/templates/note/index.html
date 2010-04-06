@@ -16,7 +16,7 @@
     {% for note in notes %}
         <li class="note" id="{{ note.id }}" timestamp="{{ note.modified }}">
             <blockquote class="content">{{ note.content }}</blockquote>
-            <div class="extra_info hidden">
+            <div class="extra_info">
                 <span class="time">{{ note.modified|date:"n月j日 G:s" }}</span>
                 <div class="action">
                     <a class="edit" href="/note/modify">修改</a>
@@ -29,7 +29,7 @@
 </div>
 <li class="note hidden" id="note_template">
     <p class="content"></p>
-    <div class="extra_info hidden">
+    <div class="extra_info">
         <span class="time"></span>
         <div class="action">
             <a class="edit" href="/note/modify">修改</a>
@@ -113,6 +113,7 @@ $(document).ready(function(){
         return false;
     });
 
+    /*
     $(".note").live('mouseover mouseout',
         function(event) {
             if (event.type == 'mouseover') {
@@ -123,6 +124,7 @@ $(document).ready(function(){
             }
         }
     );
+    */
 });
 </script>
 {% endblock %}

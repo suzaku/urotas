@@ -8,7 +8,7 @@
     <style type="text/css">
     body {
         font-size: 0.8em;
-        background: url('/static/images/urotas_bg.png') repeat-x;
+        /*background: url('/static/images/urotas_bg.png') repeat-x;*/
         min-height: 500px;
         color: #000;
     }
@@ -17,17 +17,23 @@
     }
     #user_prompt {
         position: absolute;
-        right: 0;
         top: 0;
+        right: 0;
+    }
+    #user_prompt p{
+        display: inline;
+        padding: 1em;
     }
     div#navbar {
         height: 30px;
-        width: 100%;
+        width: 70%;
+        margin: 0 auto;
         border-top: solid #000 1px;
         border-bottom: solid #000 1px;
         background-color: #369;
     }
     div#navbar ul {
+        float: left;
         margin: 0;
         padding: 0;
         font-size: small;
@@ -59,7 +65,6 @@
     .note_column {
         width: 50%;
         margin: 0 auto;
-        border: blue solid 1px;
     }
     .messages {
         clear: both;
