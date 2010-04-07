@@ -7,8 +7,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^accounts/login/$', 'django.contrib.auth.views.login'),
-    (r'^accounts/logout/$', 'django.contrib.auth.views.logout'),
+    (r'^people/', include('urotas.people.urls')),
     (r'^note/', include('urotas.note.urls')),
 
     (r'^static/(?P<path>.*)$', 'django.views.static.serve',

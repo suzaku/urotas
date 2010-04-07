@@ -86,3 +86,6 @@ INSTALLED_APPS = (
     'urotas.note',
     'urotas.compress',
 )
+
+LOGIN_URL = '/people/login/'
+LOGOUT_URL = '/people/logout/'
