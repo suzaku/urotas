@@ -9,7 +9,8 @@ from django.shortcuts import (render_to_response, get_list_or_404,
                               get_object_or_404)
 
 from models import Note, Tag
-from forms import NoteForm, QueryNotesByTimeForm, SearchNoteForm
+from forms import (ModifyNoteForm, NewNoteForm, 
+                   QueryNotesByTimeForm, SearchNoteForm)
 
 @login_required
 def index(request):
@@ -23,7 +24,7 @@ def create(request):
     # DONE 将Note转换成合适的JSON对象(为了在前端上与下一任务保持一致,
     #      虽然只有一项, 也将结果放入列表中再返回)
     if request.method == 'POST':
-        form = NoteForm(request.POST)
+        form = NewNoteForm(request.POST)
         if form.is_valid():
             note = Note(author=request.user,
                         content=form.cleaned_data['content'])
@@ -33,6 +34,23 @@ def create(request):
             return HttpResponse(simplejson.dumps(data),
                                 mimetype='application/json')
     return HttpResponse('false', mimetype='application/json')
+
+@login_required
+def modify(request):
+    if request.method == 'POST':
+        form = ModifyNoteForm(request.user, request.POST)
+        if form.is_valid():
+            saved_note = form.save()
+            notes_query = QueryNotesByTimeForm(request.POST)
+            if notes_query.is_valid():
+                notes = notes_query.fetch_notes(request.user.notes)
+                notes = [note.get_serializable() for note in notes]
+                return HttpResponse(simplejson.dumps(notes),
+                                    mimetype='application/json')
+            return HttpResponse('true', mimetype='application/json')
+        else:
+            # TODO 异常情况, 加LOG
+            return HttpResponse('false', mimetype='application/json')
 
 @login_required
 def remove(request):
@@ -48,10 +66,7 @@ def list(request):
     # DONE 解决前端动态添加的note记录没有timestamp属性的问题
     form = QueryNotesByTimeForm(request.GET)
     if form.is_valid():
-        since = form.cleaned_data['timestamp']
-        delta = form.cleaned_data['delta']
-        notes = request.user.notes.filter(
-                            modified__lt=since).all()[:delta]
+        notes = form.fetch_notes(request.user.notes)
         notes = [note.get_serializable() for note in notes]
         return HttpResponse(simplejson.dumps(notes),
                             mimetype='application/json')
