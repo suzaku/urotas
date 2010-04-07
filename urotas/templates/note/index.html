@@ -5,8 +5,8 @@
 {% block content %}
 
 {% block form %}
-<form class="note_form" action="/note/create" method="POST">
-	<textarea id="content_area" name="content" class="auto-focus"></textarea>
+<form action="/note/create" method="POST">
+	<textarea class="note_form" id="content_area" name="content" class="auto-focus"></textarea>
     <p>按Ctrl+Enter发送微记</p>
 	<input type="submit" value="记上一笔" />
 </form>
@@ -96,19 +96,6 @@ $(document).ready(function(){
         }
         return false;
     });
-
-    /*
-    $(".note").live('mouseover mouseout',
-        function(event) {
-            if (event.type == 'mouseover') {
-                $(this).find('.extra_info').show();    
-            }
-            else {
-                $(this).find('.extra_info').hide();
-            }
-        }
-    );
-    */
 });
 </script>
 {% endblock %}
