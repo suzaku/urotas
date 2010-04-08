@@ -72,7 +72,8 @@ class Note(models.Model):
                 taggedNote.save()
             except IntegrityError:
                 pass 
-models.signals.post_save.connect(Note.update_tags, sender=Note)
+models.signals.post_save.connect(Note.update_tags, sender=Note,
+                                 dispatch_uid="note.models.note")
 
 class TaggedNote(models.Model):
     """Assocation Table of Tag and Note
@@ -85,3 +86,21 @@ class TaggedNote(models.Model):
 
     class Meta:
         unique_together = (('note', 'tag'),)
+
+    @staticmethod
+    def inc_tag_used(instance, **kwargs):
+        """Increment the `used` field"""
+        tag = instance.tag
+        tag.used += 1
+        tag.save()
+
+    @staticmethod
+    def dec_tag_used(instance, **kwargs):
+        """Decrement the `used` field"""
+        tag = instance.tag
+        tag.used -= 1
+        tag.save()
+models.signals.post_save.connect(TaggedNote.inc_tag_used, sender=TaggedNote,
+                                 dispatch_uid="note.models.tagged_note")
+models.signals.pre_delete.connect(TaggedNote.dec_tag_used, sender=TaggedNote,
+                                  dispatch_uid="note.models.tagged_note")
