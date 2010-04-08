@@ -7,14 +7,27 @@ from urotas.local.models.fields import (FormatDateTimeField,
                                         NoteContentField,)
 
 class Tag(models.Model):
+    """Tag
+
+    Make sure that the `used` value of a tag is incremented everytime a note
+    is tagged by it. Without this field, we have to count the records in the
+    association table everytime we want to know how many time a certain tag
+    has been used. Regularly, we need to sort tags by the times they are used
+    and I think this is a way to improve performance.
+    """
     content = models.CharField(max_length=32, unique=True)
     creator = models.ForeignKey(User, related_name='tags_i_created')
     used = models.IntegerField(default=0) # 使用此标签的人数
+
+    users = models.ManyToManyField(User, through='TaggedNote',
+                                  related_name='tags_i_used')
 
     class Meta:
         ordering = ['-used']
 
 class Note(models.Model):
+    """Note"""
+    #TODO remove the `is_changable` field
     author = models.ForeignKey(User, related_name='notes')
     content = NoteContentField(max_length=256)
     created = FormatDateTimeField(format="n月j日 G:s",
@@ -31,6 +44,8 @@ class Note(models.Model):
         ordering = ['-modified']
 
     def get_serializable(self):
+        """Return a simple python dict that can be dumped by simplejson
+        directly."""
         modified_f = self._meta.get_field_by_name('modified')[0]
         return {
                 'id': self.id,
@@ -40,28 +55,33 @@ class Note(models.Model):
                 }
 
     @staticmethod
-    def parse_for_tags(instance, **kwargs):
+    def update_tags(instance, **kwargs):
+        """Save `TaggedNote` objects according to tags contains in 
+        `instance.cotent`. Create new tags if necessary."""
         # TODO 将不再包含的标签去掉, 增加新的标签
-        tag_tokens = instance.content.text.split('#')
-        if len(tag_tokens) >= 3:
-            for token in tag_tokens[1:-1:2]:
-                try:
-                    tag = Tag(content=token, creator=instance.author)
-                    tag.save()
-                except IntegrityError:
-                    tag = Tag.objects.get(content=token)
-                
-                try:
-                    taggedNote = TaggedNote(note=instance, tag=tag)
-                    taggedNote.save()
-                except IntegrityError:
-                    pass 
-
-models.signals.post_save.connect(Note.parse_for_tags, sender=Note)
+        for token in instance.content.tags:
+            try:
+                tag = Tag(content=token, creator=instance.author)
+                tag.save()
+            except IntegrityError:
+                tag = Tag.objects.get(content=token)
+            
+            try:
+                taggedNote = TaggedNote(note=instance, tag=tag,
+                                        tagged_by=instance.author)
+                taggedNote.save()
+            except IntegrityError:
+                pass 
+models.signals.post_save.connect(Note.update_tags, sender=Note)
 
 class TaggedNote(models.Model):
+    """Assocation Table of Tag and Note
+    `tagged_by` field is designed for the performance and convinience of 
+    retrieving all tags used by a user.
+    """
     note = models.ForeignKey(Note)
     tag = models.ForeignKey(Tag)
+    tagged_by = models.ForeignKey(User)
 
     class Meta:
         unique_together = (('note', 'tag'),)
