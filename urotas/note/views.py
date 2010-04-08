@@ -82,7 +82,8 @@ def search(request):
         tag_name = form.cleaned_data['tag']
         notes = request.user.notes.filter(
                         tags__content=tag_name).all()[:17]
-        return render_to_response('note/search.html', {'notes':notes})
+        return render_to_response('note/search.html', {'notes':notes},
+                                  RequestContext(request))
     else:
         # TODO 处理出现异常参数的情况
         return HttpResponse('false',
