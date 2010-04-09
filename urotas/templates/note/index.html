@@ -2,6 +2,14 @@
 
 {% block title %}{{ block.super }} | Note{% endblock %}
 
+{% block style_block %}
+{{ block.super }}
+<style type="text/css">
+.counter { display:block; }
+.exceeded { color: red; }
+</style>
+{% endblock %}
+
 {% block content %}
 
 {% block form %}
@@ -26,11 +34,18 @@
 {{ block.super }}
 <script src="/static/scripts/jquery.hotkeys-0.7.9.min.js"
         type="text/javascript"></script>
+<script src="/static/scripts/charCount.js"
+        type="text/javascript"></script>
 <script src="/static/scripts/urotas.note.js"
         type="text/javascript"></script>
 <script type="text/javascript">
 $(document).ready(function(){
     loadOnScroll();
+
+    $("#content_area").charCount({
+        allowed: 128, 
+        counterText: '您还可以输入'
+    });
 
     $('form').bind('keydown', 'ctrl+return', function(){
         var data = $(this).serialize();
