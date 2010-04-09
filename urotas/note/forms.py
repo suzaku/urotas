@@ -85,3 +85,9 @@ class QueryNoteForm(forms.Form):
         the queryset is turn into a record set."""
         queryset = self.get_filtered_queryset(queryset)
         return self.before_return(queryset)
+
+    def query_as_dict(self):
+        query = {}
+        for k, v in self.data.items():
+            query[k] = self._raw_value(k)
+        return query

@@ -79,9 +79,9 @@ def list(request, format="html"):
             # TODO Make the page remember what query is made.
             #      how to regenerate the query dict? 
             #      will request.GET be perfect for this?
-            queried_tags = note_query.cleaned_data['tags']
+            query = note_query.query_as_dict()
             return render_to_response('note/search.html',
-                                      {'notes':notes, 'queried_tags': queried_tags},
+                                      {'notes':notes, 'query': simplejson.dumps(query)},
                                       RequestContext(request))
     else:
         # TODO a proper way to handle invalid format?

@@ -20,7 +20,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
     loadOnScroll({
-        params: { tags: "{{ queried_tags|join:',' }}" },
+        params: {{ query|safe }},
     });
     makeNoteDeletable();
 });
