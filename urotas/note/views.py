@@ -9,8 +9,7 @@ from django.shortcuts import (render_to_response, get_list_or_404,
                               get_object_or_404)
 
 from models import Note, Tag
-from forms import (ModifyNoteForm, NewNoteForm, 
-                   QueryNotesByTimeForm, SearchNoteForm)
+from forms import ModifyNoteForm, NewNoteForm, QueryNoteForm
 
 @login_required
 def index(request):
@@ -54,7 +53,7 @@ def modify(request):
                                     mimetype='application/json')
             return HttpResponse('true', mimetype='application/json')
         else:
-            # TODO 异常情况, 加LOG
+            # TODO add log info
             return HttpResponse('false', mimetype='application/json')
 
 @login_required
@@ -65,29 +64,26 @@ def remove(request):
         note.delete()
         return HttpResponse('true', mimetype='application/json')
 
-@login_required
-def list(request):
-    # DONE 用django.form 实现 since, delta参数的获取
-    # DONE 解决前端动态添加的note记录没有timestamp属性的问题
-    form = QueryNotesByTimeForm(request.GET)
-    if form.is_valid():
-        notes = form.fetch_notes(request.user.notes)
-        notes = [note.get_serializable() for note in notes]
-        return HttpResponse(simplejson.dumps(notes),
-                            mimetype='application/json')
-    else:
-        # TODO 处理出现异常参数的情况
-        return HttpResponse('false',
-                            mimetype='application/json')
 
 @login_required
-def search(request):
-    form = SearchNoteForm(request.GET)
-    if form.is_valid():
-        notes = form.fetch_notes(request.user.notes)
-        return render_to_response('note/search.html', {'notes':notes},
-                                  RequestContext(request))
+def list(request, format="html"):
+    note_query = QueryNoteForm(request.GET)
+    if note_query.is_valid():
+        notes = note_query.fetch_records(Note.objects)
+
+        if format == 'json':
+            notes = [note.get_serializable() for note in notes]
+            return HttpResponse(simplejson.dumps(notes),
+                                mimetype='application/json')
+        elif format == 'html':
+            # TODO Make the page remember what query is made.
+            #      how to regenerate the query dict? 
+            #      will request.GET be perfect for this?
+            queried_tags = note_query.cleaned_data['tags']
+            return render_to_response('note/search.html',
+                                      {'notes':notes, 'queried_tags': queried_tags},
+                                      RequestContext(request))
     else:
-        # TODO 处理出现异常参数的情况
+        # TODO a proper way to handle invalid format?
         return HttpResponse('false',
                             mimetype='application/json')

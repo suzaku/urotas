@@ -19,7 +19,9 @@
         type="text/javascript"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-    loadOnScroll();
+    loadOnScroll({
+        params: { tags: "{{ queried_tags|join:',' }}" },
+    });
     makeNoteDeletable();
 });
 </script>
