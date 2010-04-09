@@ -47,5 +47,15 @@ class QueryNotesByTimeForm(forms.Form):
 
 # TODO 是否合并到QueryNotesByTimeForm?
 class SearchNoteForm(forms.Form):
-    """根据标签查询微记"""
-    tag = forms.CharField(max_length=32)
+    """Search Note by Tags"""
+    tags = forms.CharField(max_length=128) # comma separated tag names
+
+    def clean_tags(self):
+        tags = self.cleaned_data['tags']
+        tags = tags.split(',')
+        return tags
+
+    def fetch_notes(self, queryset):
+        tag_names = self.cleaned_data['tags']
+        notes = queryset.filter(tags__content__in=tag_names).all()[:17]
+        return notes

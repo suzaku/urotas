@@ -14,6 +14,8 @@ from forms import (ModifyNoteForm, NewNoteForm,
 
 @login_required
 def index(request):
+    # TODO If there is only one page of notes, don't call 
+    #      `loadOnScroll` at the frontend
     notes = request.user.notes.all()[:17]
     return render_to_response('note/index.html',
                               {'notes':notes},
@@ -21,8 +23,11 @@ def index(request):
 
 @login_required
 def create(request):
-    # DONE 将Note转换成合适的JSON对象(为了在前端上与下一任务保持一致,
-    #      虽然只有一项, 也将结果放入列表中再返回)
+    # TODO Receive a `timestamp` parameter and return all the
+    #      notes that is modified after `timestamp`. Because
+    #      in rare cases uses open the same page multiple times
+    #      , and if we just return the note just added we would
+    #      miss some notes submitted in other pages.
     if request.method == 'POST':
         form = NewNoteForm(request.POST)
         if form.is_valid():
@@ -79,9 +84,7 @@ def list(request):
 def search(request):
     form = SearchNoteForm(request.GET)
     if form.is_valid():
-        tag_name = form.cleaned_data['tag']
-        notes = request.user.notes.filter(
-                        tags__content=tag_name).all()[:17]
+        notes = form.fetch_notes(request.user.notes)
         return render_to_response('note/search.html', {'notes':notes},
                                   RequestContext(request))
     else:

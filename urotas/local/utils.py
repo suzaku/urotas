@@ -26,7 +26,7 @@ class NoteContent(object):
                 if untagged:
                     buf.append(escape(untagged))
                 if tagged:
-                    buf.append('<a href="/note/search?tag=%s">%s</a>' % (
+                    buf.append('<a href="/note/search?tags=%s">%s</a>' % (
                                             quote(tagged[1:-1]), escape(tagged) ))
             self.html = mark_safe(''.join(buf))
         else:
