@@ -20,7 +20,7 @@
 </form>
 {% endblock %}
 
-<div class="note_column">
+<div id="note_column">
     <ul class="messages">
     {% for note in notes %}
         {% include "note/note_snippet.html" %}
@@ -44,7 +44,7 @@ $(document).ready(function(){
 
     $("#content_area").charCount({
         allowed: 128, 
-        counterText: '您还可以输入'
+        counterText: '我还可以输入'
     });
 
     $('form').bind('keydown', 'ctrl+return', function(){
