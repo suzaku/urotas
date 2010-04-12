@@ -90,3 +90,5 @@ INSTALLED_APPS = (
 LOGIN_URL = '/people/login/'
 LOGOUT_URL = '/people/logout/'
 LOGIN_REDIRECT_URL = '/note'
+
+LOG_FILE = 'info.log'
