@@ -84,7 +84,10 @@ def list(request, format="html"):
             return render_to_response('note/search.html',
                                       {'notes':notes, 'query': simplejson.dumps(query)},
                                       RequestContext(request))
+        else:
+            logger.error("Invalid format in url: %s" % format)
     else:
-        # TODO a proper way to handle invalid format?
-        return HttpResponse('false',
-                            mimetype='application/json')
+        logger.error("Invalid query data: %s" % note_query.data)
+
+    return HttpResponse('false',
+                        mimetype='application/json')
