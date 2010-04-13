@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.sites.models import RequestSite, Site
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 from forms import AuthenticationRememberMeForm
 
 # 将logout函数引入到views模块中, 方便urls设置时统一设定python路径前缀
@@ -63,3 +64,8 @@ def login(request, template_name='people/login.html',
     }, context_instance=RequestContext(request))
 login = never_cache(login)
 
+@login_required
+def profile(request):
+    # TODO user profile setting
+    return render_to_response('people/profile.html', 
+                              context_instance=RequestContext(request))

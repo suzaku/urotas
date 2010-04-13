@@ -6,10 +6,20 @@ Replace these with more appropriate tests for your application.
 """
 
 from django.test import TestCase
+from models import Note
+from django.contrib.auth.models import User
 
-class Test(TestCase):
-    def test_add(self):
-        self.assertEqual(1+1, 2)
+class NoteTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('tester',
+                                             'tester')
+        self.note = Note(author=self.user, content='#test#')
+        self.note.save()
+
+    def test_get_serializable(self):
+        note_dict = self.note.get_serializable()
+        self.assertEqual(note_dict['content'], 
+                         self.note.content.html)
 
 """
 from utils import tag_linkify
