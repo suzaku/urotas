@@ -1,3 +1,4 @@
+#-*-coding=utf-8-*-
 """
 This file demonstrates two different styles of tests (one doctest and one
 unittest). These will both pass when you run "manage.py test".
@@ -6,10 +7,25 @@ Replace these with more appropriate tests for your application.
 """
 
 from django.test import TestCase
+from models import Note
+from django.contrib.auth.models import User
 
-class Test(TestCase):
-    def test_add(self):
-        self.assertEqual(1+1, 2)
+class NoteTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('tester',
+                                             'tester')
+        self.note = Note(author=self.user, content='#test#')
+        self.note.save()
+
+    def test_get_serializable(self):
+        note_dict = self.note.get_serializable()
+        self.assertEqual(note_dict['id'], self.note.id)
+        self.assertEqual(note_dict['content'], self.note.content.html)
+        from django.utils.dateformat import format
+        self.assertEqual(note_dict['modified'], 
+                         format(self.note.modified, 'n月j日 G:s'))
+        self.assertEqual(note_dict['timestamp'],
+                         self.modified.strftime('%Y-%m-%d %H:%M:%S.%f'))
 
 """
 from utils import tag_linkify
