@@ -11,6 +11,8 @@ from django.shortcuts import (render_to_response, get_list_or_404,
 from models import Note, Tag
 from forms import ModifyNoteForm, NewNoteForm, QueryNoteForm
 
+from urotas import logger
+
 @login_required
 def index(request):
     # TODO If there is only one page of notes, don't call 
@@ -60,12 +62,14 @@ def modify(request):
 def remove(request):
     if 'note_id' in request.REQUEST:
         note_id = request.REQUEST['note_id']
-        note = Note.objects.get(id=note_id)
-        note.delete()
-        return HttpResponse('true', mimetype='application/json')
+        try:
+            note = Note.objects.get(id=note_id)
+            note.delete()
+            return HttpResponse('true', mimetype='application/json')
+        except Note.DoesNotExist:
+            logger.error("Note with id `%s` does not exist." % note_id)
+            return HttpResponse('false', mimetype='application/json')
 
-
-@login_required
 def list(request, format="html"):
     note_query = QueryNoteForm(request.GET)
     if note_query.is_valid():
@@ -76,9 +80,6 @@ def list(request, format="html"):
             return HttpResponse(simplejson.dumps(notes),
                                 mimetype='application/json')
         elif format == 'html':
-            # TODO Make the page remember what query is made.
-            #      how to regenerate the query dict? 
-            #      will request.GET be perfect for this?
             query = note_query.query_as_dict()
             return render_to_response('note/search.html',
                                       {'notes':notes, 'query': simplejson.dumps(query)},
