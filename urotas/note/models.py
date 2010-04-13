@@ -25,6 +25,12 @@ class Tag(models.Model):
     class Meta:
         ordering = ['-used']
 
+    def __eq__(self, other):
+        return super(Tag, self).__eq__(other) and (self.content == other.content)
+
+    def __unicode__(self):
+        return '<Tag: %s>' % self.content
+
 class Note(models.Model):
     """Note"""
     #TODO remove the `is_changable` field
@@ -58,20 +64,24 @@ class Note(models.Model):
     def update_tags(instance, **kwargs):
         """Save `TaggedNote` objects according to tags contains in 
         `instance.cotent`. Create new tags if necessary."""
-        # TODO 将不再包含的标签去掉, 增加新的标签
+        old_tags = list(instance.tags.all())
         for token in instance.content.tags:
-            try:
-                tag = Tag(content=token, creator=instance.author)
-                tag.save()
-            except IntegrityError:
-                tag = Tag.objects.get(content=token)
-            
-            try:
-                taggedNote = TaggedNote(note=instance, tag=tag,
-                                        tagged_by=instance.author)
-                taggedNote.save()
-            except IntegrityError:
-                pass 
+            tag, t_is_new = Tag.objects.get_or_create(content=token,
+                                defaults={'creator':instance.author})
+
+            taggedNote, tn_is_new = TaggedNote.objects.get_or_create(
+                                    note=instance, tag=tag,
+                                    defaults={'tagged_by':instance.author})
+            if tag in old_tags:
+                # old tags that remain in the content are removed from
+                # the `old_tags` list, which in the end contains only 
+                # tags that are not longer used by `instance`
+                old_tags.remove(tag)
+
+        for tag in old_tags:
+            taggedNote = TaggedNote.objects.get(note=instance,
+                                                tag=tag)
+            taggedNote.delete()
 models.signals.post_save.connect(Note.update_tags, sender=Note,
                                  dispatch_uid="note.models.note")
 
