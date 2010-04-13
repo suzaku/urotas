@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ block.super }} | Note{% endblock %}
+
+{% block content %}
+<div class="note_column">
+    <ul class="messages">
+    {% for note in notes %}
+        {% include "note/note_snippet.html" %}
+    {% endfor %}
+    </ul>
+</div>
+{% include "note/note_snippet.html" %}
+{% endblock %}
+
+{% block script_block %}
+{{ block.super }}
+<script src="/static/scripts/urotas.note.js"
+        type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    loadOnScroll({
+        params: {{ query|safe }},
+    });
+    makeNoteDeletable();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<title>{% block title %}Urotas{% endblock %}</title>
+    {% block style_block %}
+    <link rel="stylesheet" type="text/css" href="/static/styles/reset-fonts-grids.css">
+    <style type="text/css">
+    body {
+        font-size: 0.8em;
+        /*background: url('/static/images/urotas_bg.png') repeat-x;*/
+        background: #000;
+        min-height: 500px;
+        color: #aae;
+    }
+    h1 {
+        font-size: 2.5em; 
+        text-shadow: #00f 0px 1px 1px;
+    }
+    .hidden {
+        display: none;
+    }
+    .center {
+        margin: 0 auto;
+    }
+    #user_prompt {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    #user_prompt p{
+        display: inline;
+        padding: 1em;
+    }
+    div#navbar {
+        height: 30px;
+        width: 60%;
+        margin: 0 auto;
+        border-top: solid #000 1px;
+        border-bottom: solid #000 1px;
+        background-color: #369;
+    }
+    div#navbar ul {
+        float: left;
+        margin: 0;
+        padding: 0;
+        font-size: small;
+        color: #FFF;
+        line-height: 30px;
+        white-space: nowrap;
+    }
+    div#navbar li {
+        list-style-type: none;
+        display: inline;
+    }
+    div#navbar li a {
+        text-decoration: none;
+        padding: 7px 10px;
+        color: #FFF;
+    }
+    div#navbar li a:link {
+        color: #FFF;
+    }
+    div#navbar li a:visited {
+        color: #CCC;
+    }
+    div#navbar li a:hover {
+        font-weight: bold;
+        color: #FFF;
+        background-color: #36F;
+    }
+
+    #note_column { 
+        width: 50%;
+        margin: 0 auto;
+    }
+    .messages {
+        clear: both;
+        width: 50em; 
+        margin: 0 auto;
+    }
+    .note_form {
+        margin: 1em auto;
+        font-size: 120%;
+        height: 8em;
+        width: 27em; 
+    }
+    ul .note_form { height: 5em; width: 25em; }
+    .note {
+        clear: both;
+        width: 30em;
+        margin: 1em auto;
+    }
+    .content{
+        line-height: 1.5em;
+        text-align: justify;
+        font-size: 1.2em;
+
+        margin: 0 auto;
+        padding: 2ex 0 0;
+        width: 25em;
+    }
+    .extra_info { float: right; }
+    .action { display: inline; }
+    .action a { text-decoration: none; }
+    .editable {
+        color: #000;
+        background: #aae;
+    }
+    </style>
+    {% endblock %}
+</head>
+<body>
+    {% block header %}
+    <div id="header">
+        <h1>Urotas MicroNote</h1>
+
+        {% if user.is_authenticated %}
+        <div id="navbar">
+            <ul>
+                <li><a href="/note">我要微记</a></li>
+                <li><a href="/people/page/{{ user.username }}">个人页面</a></li>
+                <li><a href="/note/garden">微记花园</a></li>
+                <li><a href="/people/profile">我的设置</a></li>
+            </ul>
+        </div>
+
+        <div id="user_prompt">
+            <p class="greeting">你好, {{ user.username }}</p>
+            <a href="{% url django.contrib.auth.views.logout %}">退出</a>
+        </div>
+        {% endif %}
+    </div>
+    {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+
+    {% block footer %}
+    <a href="http://djangopony.com/" class="ponybadge" title="Magic! Ponies! Django! Whee!">
+        <img src="http://media.djangopony.com/img/small/badge.png" width="210" height="65" alt="pony powered">
+    </a>
+    <a href="http://www.python.org/" title="Python">
+        <img src="http://www.python.org/community/logos/python-powered-h-50x65.png" alt="python powered">
+    </a>
+    {% endblock %}
+
+    {% block script_block %}
+    <script type="text/javascript" src="/static/scripts/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        var el = $('.auto-focus');
+        if (el.length > 0) {
+            el = el[0];
+            if (el.hadFocus !== true) {
+                el.focus();
+            }
+        }
+    });
+    </script>
+    {% endblock %}
+</body>
+</html>

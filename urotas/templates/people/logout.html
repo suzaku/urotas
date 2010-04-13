@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="goodbye-info">
+    <p>欢迎再次回来.</p>
+    <a href="{% url people.views.login %}">重新登录</a>
+</div>
+{% endblock %}

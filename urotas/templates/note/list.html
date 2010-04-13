@@ -1,0 +1,18 @@
+{% extends 'note/index.html' %}
+
+{% block content %}
+{% if notes %}
+    <ul class="messages">
+    {% for note in notes %}
+        <li class="note" id="{{ note.id }}">
+            <span class="author">{{ note.author.username }}</span>
+            <p class="content">{{ note.content }}</p>
+            <span class="time">{{ note.created|timesince }}</span>
+            {% ifequal note.author user %}
+            <a class="action" href="/note/remove">删除</a>
+            {% endifequal %}
+        </li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

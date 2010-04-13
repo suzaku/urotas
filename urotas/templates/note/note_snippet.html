@@ -1,0 +1,12 @@
+<li class="note {% if not note %}hidden{% endif %}"
+    id="{{ note.id|default:"note_template" }}" 
+    timestamp="{{ note.modified }}">
+    <blockquote class="content">{{ note.content }}</blockquote>
+    <div class="extra_info">
+        <span class="time">{{ note.modified|date:"n月j日 G:s" }}</span>
+        <div class="action">
+            <a class="edit" href="/note/modify">修改</a>
+            <a class="del" href="/note/remove">删除</a>
+        </div>
+    </div>
+</li>
