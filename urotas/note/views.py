@@ -5,8 +5,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 
 from django.template import RequestContext
-from django.shortcuts import (render_to_response, get_list_or_404,
-                              get_object_or_404)
+from django.shortcuts import render_to_response
 
 from models import Note, Tag
 from forms import ModifyNoteForm, NewNoteForm, QueryNoteForm
