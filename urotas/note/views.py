@@ -55,7 +55,7 @@ def modify(request):
                                     mimetype='application/json')
             return HttpResponse('true', mimetype='application/json')
         else:
-            # TODO add log info
+            logger.error("Invalid query data: %s" % form.data)
             return HttpResponse('false', mimetype='application/json')
 
 @login_required
