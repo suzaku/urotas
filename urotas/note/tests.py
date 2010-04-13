@@ -7,7 +7,7 @@ Replace these with more appropriate tests for your application.
 """
 
 from django.test import TestCase
-from models import Note
+from models import Note, Tag
 from django.contrib.auth.models import User
 
 class NoteTest(TestCase):
@@ -25,7 +25,18 @@ class NoteTest(TestCase):
         self.assertEqual(note_dict['modified'], 
                          format(self.note.modified, 'n月j日 G:s'))
         self.assertEqual(note_dict['timestamp'],
-                         self.modified.strftime('%Y-%m-%d %H:%M:%S.%f'))
+                         self.note.modified.strftime('%Y-%m-%d %H:%M:%S.%f'))
+
+    def test_update_tags(self):
+        orig_tags = self.note.tags.all()
+        self.assertTrue(Tag.objects.get(content='test') in orig_tags)
+        self.note.content = '#new test# ok #a third one#'
+        self.note.save()
+        new_tags = self.note.tags.all()
+        self.assertFalse(Tag.objects.get(content='test') in new_tags)
+        self.assertTrue(Tag.objects.get(content='new test') in new_tags)
+        self.assertTrue(Tag.objects.get(content='a third one') in new_tags)
+
 
 """
 from utils import tag_linkify
