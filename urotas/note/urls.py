@@ -5,6 +5,6 @@ urlpatterns = patterns('note.views',
     (r'^create$', 'create'),
     (r'^modify$', 'modify'),
     (r'^remove$', 'remove'),
-    (r'^list$', 'list'), # FIXME two similar url patterns?
+    (r'^list/$', 'list'), # FIXME two similar url patterns?
     (r'^list/(?P<format>json)?$', 'list'),
 )

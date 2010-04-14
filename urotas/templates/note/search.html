@@ -3,6 +3,16 @@
 {% block title %}{{ block.super }} | Note{% endblock %}
 
 {% block content %}
+<div>
+    <ol id="tag_list">
+        {% for tag in tags %}
+        <li>
+            <a href='{% url note.views.list %}?tags={{ tag.content }}'>{{ tag.content }}({{ tag.used }})</a>
+        </li>
+        {% endfor %}
+    </ol>
+</div>
+
 <div class="note_column">
     <ul class="messages">
     {% for note in notes %}
