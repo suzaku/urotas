@@ -9,6 +9,7 @@ Replace these with more appropriate tests for your application.
 from django.test import TestCase
 from models import Note, Tag
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 class NoteTest(TestCase):
     def setUp(self):
@@ -37,17 +38,11 @@ class NoteTest(TestCase):
         self.assertTrue(Tag.objects.get(content='new test') in new_tags)
         self.assertTrue(Tag.objects.get(content='a third one') in new_tags)
 
-"""
-from utils import tag_linkify
-class NoteTest(TestCase):
-    def setUp(self):
-        self.content_without_tag = 'nothing about tag'
-        self.content = '#Tag:># message #Tag2#'
-        self.linkified_content = '<a href="/note/search?tag=Tag%3A%3E">#Tag:&gt;#</a> message <a href="/note/search?tag=Tag2">#Tag2#</a>'
-
-    def test_note_tag_to_link(self):
-        self.assertEqual(self.content_without_tag,
-                         tag_linkify(self.content_without_tag))
-        self.assertEqual(self.linkified_content,
-                         tag_linkify(self.content))
-"""
+    def test_content_conversion(self):
+        list_url = reverse('note.views.list')
+        self.note.content = '#Tag:># message #Tag2#'
+        self.note.save()
+        self.assertEqual(self.note.content.html,
+                        '<a href="'+list_url+
+                        '?tags=Tag%3A%3E">#Tag:&gt;#</a> message <a href="'+
+                        list_url+'?tags=Tag2">#Tag2#</a>')
