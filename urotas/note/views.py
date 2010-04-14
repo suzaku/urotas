@@ -69,6 +69,7 @@ def remove(request):
             logger.error("Note with id `%s` does not exist." % note_id)
             return HttpResponse('false', mimetype='application/json')
 
+@login_required
 def list(request, format="html"):
     note_query = QueryNoteForm(request.GET)
     if note_query.is_valid():
@@ -80,8 +81,11 @@ def list(request, format="html"):
                                 mimetype='application/json')
         elif format == 'html':
             query = note_query.query_as_dict()
+            tags = request.user.tags_i_used.all()
             return render_to_response('note/search.html',
-                                      {'notes':notes, 'query': simplejson.dumps(query)},
+                                      { 'notes':notes,
+                                        'query': simplejson.dumps(query),
+                                        'tags':tags, },
                                       RequestContext(request))
         else:
             logger.error("Invalid format in url: %s" % format)
