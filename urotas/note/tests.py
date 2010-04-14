@@ -18,6 +18,10 @@ class NoteTest(TestCase):
         self.note = Note(author=self.user, content='#test#')
         self.note.save()
 
+    def test_author(self):
+        self.assertEqual(self.note.author, self.user)
+        self.assertEqual(self.user.notes.get(), self.note)
+
     def test_get_serializable(self):
         note_dict = self.note.get_serializable()
         self.assertEqual(note_dict['id'], self.note.id)
