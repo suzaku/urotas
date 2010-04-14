@@ -6,6 +6,12 @@ from django.contrib.auth.models import User
 from urotas.local.models.fields import (FormatDateTimeField,
                                         NoteContentField,)
 
+class SortedTagManager(models.Manager):
+    def get_query_set(self):
+        orig_query_set = super(SortedTagManager, self).get_query_set()
+        return orig_query_set.annotate(
+                    used=models.Count('users')).distinct().order_by('-used')
+
 class Tag(models.Model):
     """Tag
 
@@ -19,6 +25,9 @@ class Tag(models.Model):
     creator = models.ForeignKey(User, related_name='tags_i_created')
     users = models.ManyToManyField(User, through='TaggedNote',
                                   related_name='tags_i_used')
+
+    objects_sorted_by_used = SortedTagManager()
+    objects = models.Manager()
 
     def __eq__(self, other):
         return super(Tag, self).__eq__(other) and (self.content == other.content)
