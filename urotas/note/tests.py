@@ -50,3 +50,13 @@ class NoteTest(TestCase):
                         '<a href="'+list_url+
                         '?tags=Tag%3A%3E">#Tag:&gt;#</a> message <a href="'+
                         list_url+'?tags=Tag2">#Tag2#</a>')
+
+class TagTest(TestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user('tester1', 'tester1')
+        self.tag = Tag(content="test", creator=self.user1)
+        self.tag.save()
+
+    def test_creator(self):
+        self.assertEqual(self.tag.creator, self.user1)
+        self.assertTrue(self.tag in self.user1.tags_i_created.all())
