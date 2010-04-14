@@ -33,14 +33,12 @@ class Tag(models.Model):
 
 class Note(models.Model):
     """Note"""
-    #TODO remove the `is_changable` field
     author = models.ForeignKey(User, related_name='notes')
     content = NoteContentField(max_length=256)
     created = FormatDateTimeField(format="n月j日 G:s",
                                   auto_now_add=True)
     modified = FormatDateTimeField(format="n月j日 G:s",
                                    auto_now=True)
-    is_changable = models.BooleanField(default=True) # 是否可修改
     is_private = models.BooleanField(default=False)
 
     tags = models.ManyToManyField(Tag, through='TaggedNote', 
