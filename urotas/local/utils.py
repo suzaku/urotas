@@ -6,6 +6,7 @@ import itertools
 from django.conf import settings
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
 
 import re
 TAG_PATTERN = re.compile(r'#[^#]+#')
@@ -26,7 +27,8 @@ class NoteContent(object):
                 if untagged:
                     buf.append(escape(untagged))
                 if tagged:
-                    buf.append('<a href="/note/list?tags=%s">%s</a>' % (
+                    buf.append('<a href="%s?tags=%s">%s</a>' % (
+                                            reverse('note.views.list'),
                                             quote(tagged[1:-1]), escape(tagged) ))
             self.html = mark_safe(''.join(buf))
         else:
