@@ -37,7 +37,6 @@ class NoteTest(TestCase):
         self.assertTrue(Tag.objects.get(content='new test') in new_tags)
         self.assertTrue(Tag.objects.get(content='a third one') in new_tags)
 
-
 """
 from utils import tag_linkify
 class NoteTest(TestCase):
