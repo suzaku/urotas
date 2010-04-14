@@ -17,13 +17,8 @@ class Tag(models.Model):
     """
     content = models.CharField(max_length=32, unique=True)
     creator = models.ForeignKey(User, related_name='tags_i_created')
-    used = models.IntegerField(default=0) # 使用此标签的人数
-
     users = models.ManyToManyField(User, through='TaggedNote',
                                   related_name='tags_i_used')
-
-    class Meta:
-        ordering = ['-used']
 
     def __eq__(self, other):
         return super(Tag, self).__eq__(other) and (self.content == other.content)
@@ -94,21 +89,3 @@ class TaggedNote(models.Model):
 
     class Meta:
         unique_together = (('note', 'tag'),)
-
-    @staticmethod
-    def inc_tag_used(instance, **kwargs):
-        """Increment the `used` field"""
-        tag = instance.tag
-        tag.used += 1
-        tag.save()
-
-    @staticmethod
-    def dec_tag_used(instance, **kwargs):
-        """Decrement the `used` field"""
-        tag = instance.tag
-        tag.used -= 1
-        tag.save()
-models.signals.post_save.connect(TaggedNote.inc_tag_used, sender=TaggedNote,
-                                 dispatch_uid="note.models.tagged_note")
-models.signals.pre_delete.connect(TaggedNote.dec_tag_used, sender=TaggedNote,
-                                  dispatch_uid="note.models.tagged_note")
